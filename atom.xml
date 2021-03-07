@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>无🍜不起早</title>
+  
+  
+  <link href="https://example.com/atom.xml" rel="self"/>
+  
+  <link href="https://example.com/"/>
+  <updated>2021-03-06T12:04:47.818Z</updated>
+  <id>https://example.com/</id>
+  
+  <author>
+    <name>guuzaa</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>跟我一起学 scp</title>
+    <link href="https://example.com/2021/03/06/learning-scp/"/>
+    <id>https://example.com/2021/03/06/learning-scp/</id>
+    <published>2021-03-06T11:57:32.000Z</published>
+    <updated>2021-03-06T12:04:47.818Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>我经常需要在 PC 和 Linux（远程服务器）之间传输文件。</p><p>之前，我的方法是使用 <code>MobaXterm</code>，一种图形化的方式。尽管操作直观，可是在传输的文件比较大，传输时间比较长的情况下，<code>MobaXterm</code> 就会出现断开链接的问题。</p><p>所以，本文介绍了一种使用 <code>scp</code> 命令行的方式来达到在两台电脑之间安全传输文件的效果。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;摘要&quot;&gt;&lt;a href=&quot;#摘要&quot; class=&quot;headerlink&quot; title=&quot;摘要&quot;&gt;&lt;/a&gt;摘要&lt;/h2&gt;&lt;p&gt;我经常需要在 PC 和 Linux（远程服务器）之间传输文件。&lt;/p&gt;
+&lt;p&gt;之前，我的方法是使用 &lt;code&gt;MobaXterm&lt;/cod</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>博客搭建指南</title>
+    <link href="https://example.com/2021/02/05/blog-building01/"/>
+    <id>https://example.com/2021/02/05/blog-building01/</id>
+    <published>2021-02-05T07:34:00.000Z</published>
+    <updated>2021-02-05T07:48:03.259Z</updated>
+    
+    <content type="html"><![CDATA[<p>看本文之前，需要了解下面的内容：</p><ol><li>Hexo 环境的配置，deploy 工具的下载，_config 文件的结构。</li><li>基本的 git 操作。</li><li>在 PC 生成 ssh 密钥对。</li><li>Github 和码云账号，以及开仓库和 Page 的方式。</li></ol><p>笔者一直有一个想法：利用 Hexo 和 Github Page 做一个静态博客。但是 Github Page 打开太慢，只好用国内的 Gitee Page 来做代替，但是 Gitee Page 不支持自动更新,每次写完文章需要手动更新。这很麻烦。所以我就想能不能用一些方法，在每次提交新文章的时候自动更新 Gitee Page。</p><p>查阅了一些资料和动手实践了之后找到了解决办法。</p><p>首先，简单总结自己的需求：</p><ol><li>利用 Hexo 和 Gitee Page 搭建一个静态博客。</li><li>通过某种方法实现每次将 Hexo 部署到 Gitee 上后自动更新页面功能。</li><li>备份自己的博客源文件。（非刚需）</li></ol><blockquote><p>注：Gitee Pro 支持 Gitee Page 自动更新，但是需要付费。</p></blockquote><p>我的<strong>解决办法</strong>是通过 Github Action 来实现自动更新页面功能。用到的 Action 是 <a class="link" href="https://github.com/marketplace/actions/gitee-pages-action">Gitee Pages Action<i class="fas fa-external-link-alt"></i></a>。基于这个工具，我的需求很容易就得到解决。</p><p>首先我创建一个 Github 仓库（称为<code>甲</code>）存放博客原文档和 Action，另一个仓库就是常规的 Github Page。然后我在码云里也开一个 Gitee Page 仓库。</p><p>整个流程如下：</p><ol><li>将写好的博客源代码发布到仓库<code>甲</code>中。</li><li>仓库甲中的 Action 监听 push 动作，一旦 push 就会触发 Action。Action 主要包括两步：<ul><li>部署静态博客（<code>hexo deploy</code>)到 Github Page 和 Gitee Page。 </li><li>利用 Gitee Pages Action 更新 Gitee Page。</li></ul></li></ol><p>下面我就按照这两步来展开。</p><h4 id="发布博客源代码到仓库"><a href="#发布博客源代码到仓库" class="headerlink" title="发布博客源代码到仓库"></a>发布博客源代码到仓库</h4><p>涉及到一些比较常见的 git 操作，所以不再赘述。</p><h4 id="Github-Action-的编写"><a href="#Github-Action-的编写" class="headerlink" title="Github Action 的编写"></a>Github Action 的编写</h4><p>代码: <a class="link" href="https://gist.github.com/guuzaa/700e5408209594f3621498a61d7c8ed9">https://gist.github.com/guuzaa/700e5408209594f3621498a61d7c8ed9<i class="fas fa-external-link-alt"></i></a></p><p>参考下面两篇文章中的「环境配置」部分。</p><ol><li><a class="link" href="https://hdj.me/github-actions-hexo-cicd/">https://hdj.me/github-actions-hexo-cicd/<i class="fas fa-external-link-alt"></i></a><br>虽然题目是部署，但是代码中却在生成静态博客，故我将<code>hexo g</code>改成 <code>hexo d</code>。</li><li><a class="link" href="https://blog.motreen.ml/posts/35722/">https://blog.motreen.ml/posts/35722/<i class="fas fa-external-link-alt"></i></a> </li></ol><p>需要注意的是：</p><ol><li>hexo 的 _config 文件 deploy 中 git repo 的 URL 必须是 ssh 格式，因为 ssh 密钥对只能对这种格式的仓库免密码验证。</li><li>Github 和 Gitee 的 ssh 密钥对必须是一个。</li><li>Github Action 中的代码本质就是替代了我们人为的操作，包括：部署 hexo 静态页面到 Github 和码云中；更新码云页面。</li><li>Gitee Pages Action 需要登录码云账号，所以会收到在美国异地登录的提醒。</li><li>每次生成的静态页面都是强制推送的，也就是说每次推送都会抹掉之前的数据。我们有源代码的备份，所以勉强可以接受。</li></ol><h4 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h4><ul><li><p><a class="link" href="https://guuzaa.github.io/">Github<i class="fas fa-external-link-alt"></i></a></p></li><li><p><a class="link" href="https://guuzaa.gitee.io/">码云<i class="fas fa-external-link-alt"></i></a></p></li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;看本文之前，需要了解下面的内容：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Hexo 环境的配置，deploy 工具的下载，_config 文件的结构。&lt;/li&gt;
+&lt;li&gt;基本的 git 操作。&lt;/li&gt;
+&lt;li&gt;在 PC 生成 ssh 密钥对。&lt;/li&gt;
+&lt;li&gt;Github 和码云账号</summary>
+      
+    
+    
+    
+    
+    <category term="Blog" scheme="https://example.com/tags/Blog/"/>
+    
+  </entry>
+  
+</feed>
