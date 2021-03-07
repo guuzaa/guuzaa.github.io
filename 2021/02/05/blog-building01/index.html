@@ -11,15 +11,15 @@
         
             博客搭建指南 |
         
-        无🍜不起早
+        赵扬的博客
     </title>
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="shortcut icon" href="/images/logo.svg">
+    <link rel="shortcut icon" href="/image/favicon.ico">
     <link rel="stylesheet" href="/css/font-awesome.min.css">
     <script id="hexo-configurations">
     let KEEP = window.KEEP || {};
     KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
-    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.jpg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":true},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"车到山前必有路，转弯就到停车处"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":true,"trigger":"auto","unescape":false,"preload":true},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.0"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.jpg","favicon":"/image/favicon.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":true},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"莫愁前路无知己，天下谁人不识君。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":true,"trigger":"auto","unescape":false,"preload":true},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.0"};
     KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
   </script>
 <meta name="generator" content="Hexo 5.3.0"><style>mjx-container[jax="SVG"] {
@@ -164,7 +164,7 @@ mjx-container[display="true"] + br {
     <div class="header-content">
         <div class="left">
             <a class="logo-title" href="/">
-                无🍜不起早
+                赵扬的博客
             </a>
         </div>
 
@@ -263,13 +263,13 @@ mjx-container[display="true"] + br {
                     <div class="author">
                         <span class="name">guuzaa</span>
                         
-                            <span class="author-label">Lv1</span>
+                            <span class="author-label">Trainee</span>
                         
                     </div>
                     <div class="meta-info">
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
-        <i class="fas fa-edit"></i>&nbsp;2021-02-02 09:55:00
+        <i class="fas fa-edit"></i>&nbsp;2021-02-05 15:34:00
     </span>
     
     
@@ -289,6 +289,10 @@ mjx-container[display="true"] + br {
     
     
     
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
 </div>
 
                     </div>
@@ -297,7 +301,57 @@ mjx-container[display="true"] + br {
         
 
         <div class="article-content markdown-body">
-            <p>笔者一直有一个想法：利用 hexo 和 Github Page 做一个静态博客。但是 Github Page 打开太慢,只好国内的 Gitee Page 来做代替，但是 Gitee Page 不支持自动更新,每次写完文章需要手动更新。这很麻烦。所以我就想能不能用一些方法，在每次提交新文章的时候自动更新 Gitee Page。查阅了一些资料和动手实践了之后找到了一个解决办法。</p>
+            <p>看本文之前，需要了解下面的内容：</p>
+<ol>
+<li>Hexo 环境的配置，deploy 工具的下载，_config 文件的结构。</li>
+<li>基本的 git 操作。</li>
+<li>在 PC 生成 ssh 密钥对。</li>
+<li>Github 和码云账号，以及开仓库和 Page 的方式。</li>
+</ol>
+<p>笔者一直有一个想法：利用 Hexo 和 Github Page 做一个静态博客。但是 Github Page 打开太慢，只好用国内的 Gitee Page 来做代替，但是 Gitee Page 不支持自动更新,每次写完文章需要手动更新。这很麻烦。所以我就想能不能用一些方法，在每次提交新文章的时候自动更新 Gitee Page。</p>
+<p>查阅了一些资料和动手实践了之后找到了解决办法。</p>
+<p>首先，简单总结自己的需求：</p>
+<ol>
+<li>利用 Hexo 和 Gitee Page 搭建一个静态博客。</li>
+<li>通过某种方法实现每次将 Hexo 部署到 Gitee 上后自动更新页面功能。</li>
+<li>备份自己的博客源文件。（非刚需）</li>
+</ol>
+<blockquote>
+<p>注：Gitee Pro 支持 Gitee Page 自动更新，但是需要付费。</p>
+</blockquote>
+<p>我的<strong>解决办法</strong>是通过 Github Action 来实现自动更新页面功能。用到的 Action 是 <a class="link" target="_blank" rel="noopener" href="https://github.com/marketplace/actions/gitee-pages-action">Gitee Pages Action<i class="fas fa-external-link-alt"></i></a>。基于这个工具，我的需求很容易就得到解决。</p>
+<p>首先我创建一个 Github 仓库（称为<code>甲</code>）存放博客原文档和 Action，另一个仓库就是常规的 Github Page。然后我在码云里也开一个 Gitee Page 仓库。</p>
+<p>整个流程如下：</p>
+<ol>
+<li>将写好的博客源代码发布到仓库<code>甲</code>中。</li>
+<li>仓库甲中的 Action 监听 push 动作，一旦 push 就会触发 Action。Action 主要包括两步：<ul>
+<li>部署静态博客（<code>hexo deploy</code>)到 Github Page 和 Gitee Page。 </li>
+<li>利用 Gitee Pages Action 更新 Gitee Page。</li>
+</ul>
+</li>
+</ol>
+<p>下面我就按照这两步来展开。</p>
+<h4 id="发布博客源代码到仓库"><a href="#发布博客源代码到仓库" class="headerlink" title="发布博客源代码到仓库"></a>发布博客源代码到仓库</h4><p>涉及到一些比较常见的 git 操作，所以不再赘述。</p>
+<h4 id="Github-Action-的编写"><a href="#Github-Action-的编写" class="headerlink" title="Github Action 的编写"></a>Github Action 的编写</h4><p>代码: <a class="link" target="_blank" rel="noopener" href="https://gist.github.com/guuzaa/700e5408209594f3621498a61d7c8ed9">https://gist.github.com/guuzaa/700e5408209594f3621498a61d7c8ed9<i class="fas fa-external-link-alt"></i></a></p>
+<p>参考下面两篇文章中的「环境配置」部分。</p>
+<ol>
+<li><a class="link" target="_blank" rel="noopener" href="https://hdj.me/github-actions-hexo-cicd/">https://hdj.me/github-actions-hexo-cicd/<i class="fas fa-external-link-alt"></i></a><br>虽然题目是部署，但是代码中却在生成静态博客，故我将<code>hexo g</code>改成 <code>hexo d</code>。</li>
+<li><a class="link" target="_blank" rel="noopener" href="https://blog.motreen.ml/posts/35722/">https://blog.motreen.ml/posts/35722/<i class="fas fa-external-link-alt"></i></a> </li>
+</ol>
+<p>需要注意的是：</p>
+<ol>
+<li>hexo 的 _config 文件 deploy 中 git repo 的 URL 必须是 ssh 格式，因为 ssh 密钥对只能对这种格式的仓库免密码验证。</li>
+<li>Github 和 Gitee 的 ssh 密钥对必须是一个。</li>
+<li>Github Action 中的代码本质就是替代了我们人为的操作，包括：部署 hexo 静态页面到 Github 和码云中；更新码云页面。</li>
+<li>Gitee Pages Action 需要登录码云账号，所以会收到在美国异地登录的提醒。</li>
+<li>每次生成的静态页面都是强制推送的，也就是说每次推送都会抹掉之前的数据。我们有源代码的备份，所以勉强可以接受。</li>
+</ol>
+<h4 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h4><ul>
+<li><p><a class="link" target="_blank" rel="noopener" href="https://guuzaa.github.io/">Github<i class="fas fa-external-link-alt"></i></a></p>
+</li>
+<li><p><a class="link" target="_blank" rel="noopener" href="https://guuzaa.gitee.io/">码云<i class="fas fa-external-link-alt"></i></a></p>
+</li>
+</ul>
 
         </div>
 
@@ -307,9 +361,9 @@ mjx-container[display="true"] + br {
     <ul>
         <li>本文标题：博客搭建指南</li>
         <li>本文作者：guuzaa</li>
-        <li>创建时间：2021-02-02 09:55:00</li>
+        <li>创建时间：2021-02-05 15:34:00</li>
         <li>
-            本文链接：https://guuzaa.gitee.com/2021/02/02/blog-building/
+            本文链接：https://guuzaa.gitee.io/2021/02/05/blog-building01/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -320,6 +374,26 @@ mjx-container[display="true"] + br {
             </div>
         
 
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2021/03/06/learning-scp/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">跟我一起学 scp</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+            </div>
         
 
         
@@ -343,6 +417,12 @@ mjx-container[display="true"] + br {
             2021&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">guuzaa</a>
         </div>
         
+            <script async  src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                
+            </div>
+        
         <div class="theme-info info-item">
             由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.0</a>
         </div>
@@ -358,6 +438,10 @@ mjx-container[display="true"] + br {
             <div class="post-tools-container">
     <ul class="tools-list">
         <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
         
 
         <!-- go comment -->
@@ -412,6 +496,14 @@ mjx-container[display="true"] + br {
     </div>
 
     
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E5%8D%9A%E5%AE%A2%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%B0%E4%BB%93%E5%BA%93"><span class="nav-text">发布博客源代码到仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Github-Action-%E7%9A%84%E7%BC%96%E5%86%99"><span class="nav-text">Github Action 的编写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="nav-text">最终效果</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
 
     <div class="image-viewer-container">
     <img src="">
@@ -464,6 +556,8 @@ mjx-container[display="true"] + br {
 
 
 <div class="post-scripts">
+    
+        <script src="/js/left-side-toggle.js"></script><script src="/js/libs/anime.min.js"></script><script src="/js/toc.js"></script>
     
 </div>
 
